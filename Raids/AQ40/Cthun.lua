@@ -24,13 +24,8 @@ L:RegisterTranslations("enUS", function() return {
 	tentacle_cmd = "tentacle",
 	tentacle_name = "Tentacle Alert",
 	tentacle_desc = "Warn for Tentacles",
-	rape_cmd = "rape",
-	rape_name = "Rape jokes are funny",
-	rape_desc = "Some people like hentai jokes.",
-	tentacle	= "Tentacle Rape Party - 5 sec",
-	norape		= "Tentacles in 5sec!",
-	barTentacle	= "Tentacle rape party!",
-	barNoRape	= "Tentacle party!",
+	tentacle	= "Tentacles in 5sec!",
+	barTentacle	= "Tentacle party!",
 
 	glare_cmd = "glare",
 	glare_name = "Dark Glare Alert",
@@ -109,13 +104,8 @@ L:RegisterTranslations("esES", function() return {
 	--tentacle_cmd = "tentacle",
 	tentacle_name = "Alerta de Tentáculo",
 	tentacle_desc = "Avisa para Tentáculos",
-	--rape_cmd = "rape",
-	rape_name = "Broma",
-	rape_desc = "Bromas de C'Thun.",
-	tentacle	= "Tentáclulos en 5 segundos",
-	norape		= "¡Tentáculos en 5 segundos!",
+	tentacle	= "¡Tentáculos en 5 segundos!",
 	barTentacle	= "¡Tentáculos!",
-	barNoRape	= "¡Montón de Tentáculos!",
 
 	--glare_cmd = "glare",
 	glare_name = "Alerta de Mirada oscura",
@@ -194,13 +184,8 @@ L:RegisterTranslations("deDE", function() return {
 	--tentacle_cmd = "tentacle",
 	tentacle_name = "Tentakel Alarm",
 	tentacle_desc = "Warnung vor Tentakeln", --"Warn for Tentacles",
-	--rape_cmd = "rape",
-	rape_name = "Rape jokes are funny",
-	rape_desc = "Some people like hentai jokes.",
-	tentacle	= "Tentakel Rape Party - 5 sec", --"Tentacle Rape Party - 5 sec",
-	norape		=  "Tentakel in 5sec!", --"Tentacles in 5sec!",
-	barTentacle	= "Tentakel Rape Party!", -- "Tentacle rape party!",
-	barNoRape	= "Tentakel Party", --"Tentacle party!",
+	tentacle	= "Tentakel in 5sec!", --"Tentacles in 5sec!",
+	barTentacle	= "Tentakel Party", --"Tentacle party!",
 
 	--glare_cmd = "glare",
 	glare_name = "Dunkles Starren Alarm", --"Dark Glare Alert", -- Dunkles Starren
@@ -263,7 +248,7 @@ local eyeofcthun = AceLibrary("Babble-Boss-2.2")["Eye of C'Thun"]
 local cthun = AceLibrary("Babble-Boss-2.2")["C'Thun"]
 module.enabletrigger = {eyeofcthun, cthun} -- string or table {boss, add1, add2}
 --module.wipemobs = { L["add_name"] } -- adds which will be considered in CheckForEngage
-module.toggleoptions = {"rape", -1, "tentacle", "glare", "group", -1, "giant", "acid", "weakened", -1, "proximity", "stomach", "bosskill"}
+module.toggleoptions = {"tentacle", "glare", "group", -1, "giant", "acid", "weakened", -1, "proximity", "stomach", "bosskill"}
 
 -- Proximity Plugin
 module.proximityCheck = function(unit) return CheckInteractDistance(unit, 2) end
@@ -462,11 +447,11 @@ function module:BigWigs_RecvSync(sync, rest, nick)
 	elseif sync == syncName.eyeBeam then
 		self:EyeBeam()
 	elseif sync == syncName.giantClawSpawn then
-		self:GCTentacleRape()
+		self:GCTentacleParty()
 	elseif sync == syncName.giantEyeSpawn then
-		self:GTentacleRape()
+		self:GTentacleParty()
 	elseif sync == syncName.tentacleSpawn then
-		self:TentacleRape()
+		self:TentacleParty()
 	elseif sync == syncName.fleshtentacledead then
 		fleshtentacledead = true
 		self.tentacleHP = 100
@@ -491,8 +476,8 @@ function module:CThunStart()
 		self:Bar(L["barStartRandomBeams"], timer.p1RandomEyeBeams, icon.giantEye)
 
 		if self.db.profile.tentacle then
-			self:Bar(self.db.profile.rape and L["barTentacle"] or L["barNoRape"], timer.p1TentacleStart, icon.eyeTentacles)
-			self:DelayedMessage(timer.p1TentacleStart - 5, self.db.profile.rape and L["tentacle"] or L["norape"], "Urgent", false, "Alert")
+			self:Bar(L["barTentacle"], timer.p1TentacleStart, icon.eyeTentacles)
+			self:DelayedMessage(timer.p1TentacleStart - 5, L["tentacle"], "Urgent", false, "Alert")
 		end
 
 		firstGlare = true
@@ -531,8 +516,7 @@ function module:CThunP2Start()
 		-- cancel eye tentacles
 
 		self:RemoveBar(L["barTentacle"] )
-		self:RemoveBar(L["barNoRape"] )
-		self:CancelDelayedMessage(self.db.profile.rape and L["tentacle"] or L["norape"])
+		self:CancelDelayedMessage(L["tentacle"])
 		self:CancelDelayedSync(syncName.tentacleSpawn)
 
 		-- cancel dark glare group warning
@@ -543,8 +527,8 @@ function module:CThunP2Start()
 		-- start P2 events
 		if self.db.profile.tentacle then
 			-- first eye tentacles
-			self:DelayedMessage(timer.p2FirstEyeTentacles - 5, self.db.profile.rape and L["tentacle"] or L["norape"], "Urgent", false, nil, true)
-			self:Bar(self.db.profile.rape and L["barTentacle"] or L["barNoRape"], timer.p2FirstEyeTentacles, icon.eyeTentacles)
+			self:DelayedMessage(timer.p2FirstEyeTentacles - 5, L["tentacle"], "Urgent", false, nil, true)
+			self:Bar(L["barTentacle"], timer.p2FirstEyeTentacles, icon.eyeTentacles)
 		end
 
 		if self.db.profile.giant then
@@ -581,7 +565,7 @@ function module:CThunWeakened()
 	end
 
 	-- cancel tentacle timers
-	self:CancelDelayedMessage(self.db.profile.rape and L["tentacle"] or L["norape"])
+	self:CancelDelayedMessage(L["tentacle"])
 	self:CancelDelayedMessage(L["GiantEye"])
 	self:CancelDelayedSync(syncName.giantEyeSpawn)
 	self:CancelDelayedSync(syncName.giantClawSpawn)
@@ -589,7 +573,6 @@ function module:CThunWeakened()
 
 
 	self:RemoveBar(L["barTentacle"])
-	self:RemoveBar(L["barNoRape"])
 	self:RemoveBar(L["barGiant"])
 	self:RemoveBar(L["barGiantC"])
 
@@ -620,10 +603,10 @@ function module:CThunWeakenedOver()
 	self:DelayedSync(timer.p2FirstGiantEyeAfterWeaken, syncName.giantEyeSpawn)
 	self:DelayedMessage(timer.p2FirstGiantEyeAfterWeaken - 5, L["GiantEye"], "Urgent", false, nil, true)
 
-	--next rape party
-	self:Bar(self.db.profile.rape and L["barTentacle"] or L["barNoRape"], timer.p2FirstEyeAfterWeaken, icon.eyeTentacles)
+	--next tentacle party
+	self:Bar(L["barTentacle"], timer.p2FirstEyeAfterWeaken, icon.eyeTentacles)
 	self:DelayedSync(timer.p2FirstEyeAfterWeaken, syncName.tentacleSpawn)
-	self:DelayedMessage(timer.p2FirstEyeAfterWeaken - 5, self.db.profile.rape and L["tentacle"] or L["norape"], "Urgent", false, nil, true)
+	self:DelayedMessage(timer.p2FirstEyeAfterWeaken - 5, L["tentacle"], "Urgent", false, nil, true)
 end
 
 function module:DelayedEyeBeamCheck()
@@ -734,7 +717,7 @@ function module:DarkGlare()
 end
 
 -- P2
-function module:GTentacleRape()
+function module:GTentacleParty()
 	self:DelayedSync(timer.p2ETentacle, syncName.giantEyeSpawn)
 	if self.db.profile.giant then
 		self:Bar(L["barGiant"], timer.p2ETentacle, icon.giantEye)
@@ -742,7 +725,7 @@ function module:GTentacleRape()
 	end
 end
 
-function module:GCTentacleRape()
+function module:GCTentacleParty()
 	doCheckForWipe = true
 	self:DelayedSync(timer.p2GiantClaw, syncName.giantClawSpawn)
 	self:KTM_Reset()
@@ -752,10 +735,10 @@ function module:GCTentacleRape()
 	end
 end
 
-function module:TentacleRape()
+function module:TentacleParty()
 	self:DelayedSync(tentacletime, syncName.tentacleSpawn)
 	if self.db.profile.tentacle then
-		self:Bar(self.db.profile.rape and L["barTentacle"] or L["barNoRape"], tentacletime, icon.eyeTentacles)
-		self:DelayedMessage(tentacletime - 5, self.db.profile.rape and L["tentacle"] or L["norape"], "Urgent", false, nil, true)
+		self:Bar(L["barTentacle"], tentacletime, icon.eyeTentacles)
+		self:DelayedMessage(tentacletime - 5, L["tentacle"], "Urgent", false, nil, true)
 	end
 end
