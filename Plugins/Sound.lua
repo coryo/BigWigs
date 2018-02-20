@@ -31,6 +31,8 @@ local sounds = {
 
 	Murloc = "Sound\\Creature\\Murloc\\mMurlocAggroOld.wav",
 	Pain = "Sound\\Creature\\Thaddius\\THAD_NAXX_ELECT.wav",
+
+	CthunBeam = "Interface\\AddOns\\BigWigs\\Sounds\\cthunbeam.ogg"
 }
 
 

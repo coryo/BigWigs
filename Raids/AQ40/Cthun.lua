@@ -473,7 +473,7 @@ function module:CThunStart()
 		doCheckForWipe = true
 
 		self:Message(L["startwarn"], "Attention", false, false)
-		self:Bar(L["barStartRandomBeams"], timer.p1RandomEyeBeams, icon.giantEye)
+		self:Bar(L["barStartRandomBeams"], timer.p1RandomEyeBeams, icon.giantEye)	
 
 		if self.db.profile.tentacle then
 			self:Bar(L["barTentacle"], timer.p1TentacleStart, icon.eyeTentacles)
@@ -619,6 +619,7 @@ function module:DelayedEyeBeamCheck()
 			self:WarningSign(icon.eyeBeamSelf, 2 - 0.1)
 		end
 	end
+	self:Sound("CthunBeam")
 	self:Bar(string.format(L["eyebeam"], name), timer.eyeBeam - 0.1, icon.giantEye, true, "green")
 end
 function module:EyeBeam()
